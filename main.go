@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	giles "github.com/gtfierro/giles/archiver"
 	"net/http"
 	"os"
 )
@@ -53,7 +54,7 @@ func handleQuery(args []string) {
 	}
 
 	// expecting json
-	var data []interface{}
+	var data []giles.SmapMessage
 	var decoder = json.NewDecoder(resp.Body)
 	decoder.Decode(&data)
 	resp.Body.Close()
