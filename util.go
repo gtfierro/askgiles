@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	giles "github.com/gtfierro/giles/archiver"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -29,7 +30,9 @@ func doQuery(host, query string) []giles.SmapMessage {
 	// expecting json
 	var data []giles.SmapMessage
 	var decoder = json.NewDecoder(resp.Body)
-	decoder.Decode(&data)
+	if err := decoder.Decode(&data); err != nil {
+		log.Fatal(err)
+	}
 	resp.Body.Close()
 	return data
 }
@@ -52,8 +55,12 @@ func doDistinctQuery(host, query string) []string {
 
 func extractDataNumeric(msg giles.SmapMessage) []float64 {
 	var data []float64
+	if len(msg.Readings) == 0 {
+		fmt.Printf("No data for %s\n", msg.UUID)
+		return data
+	}
 	for _, rdg := range msg.Readings {
-		if rdg.IsObject() { // skip objects
+		if rdg == nil || rdg.IsObject() { // skip objects
 			continue
 		}
 		if val, ok := rdg.GetValue().(uint64); ok {
@@ -70,6 +77,9 @@ func extractDataNumeric(msg giles.SmapMessage) []float64 {
 func extractTime(msg giles.SmapMessage) []float64 {
 	var times []float64
 	for _, rdg := range msg.Readings {
+		if rdg == nil {
+			continue
+		}
 		val := rdg.GetTime()
 		times = append(times, float64(val))
 	}

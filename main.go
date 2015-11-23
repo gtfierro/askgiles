@@ -60,7 +60,7 @@ func main() {
 	downloadCommand.IntVar(&endYear, "e", 2020, "End year for download (high)")
 	downloadCommand.IntVar(&dataLimit, "l", 10000000, "Maximum number of points to download per stream")
 	downloadCommand.StringVar(&destination, "d", "./data/", "Path to folder to save data")
-	downloadCommand.StringVar(&timeunit, "t", "ms", "Unit of time to download data as: s, ms, us, ns")
+	downloadCommand.StringVar(&timeunit, "t", "_", "Unit of time to download data as: s, ms, us, ns")
 
 	if len(os.Args) == 1 {
 		flag.Usage()
