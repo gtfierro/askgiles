@@ -10,15 +10,17 @@ import (
 
 var wg sync.WaitGroup
 
+const NUM_WORKERS = 10
+
 //doDownload(host, query, destination beginYear, endYear, dataLimit)
 func doDownload(host, where, destination, timeunit string, beginYear, endYear, dataLimit int) {
 	uuidQuery := fmt.Sprintf("select distinct uuid where %s;", where)
 	uuids := doDistinctQuery(host, uuidQuery)
 
-	uuidQueue := make(chan string, 100)
+	uuidQueue := make(chan string, NUM_WORKERS)
 
 	wg.Add(len(uuids))
-	for w := 0; w < 4; w++ {
+	for w := 0; w < NUM_WORKERS; w++ {
 		go runWorker(uuidQueue, host, destination, timeunit, beginYear, endYear, dataLimit)
 	}
 
@@ -34,7 +36,6 @@ func runWorker(uuids chan string, host, destination, timeunit string, beginYear,
 		dlUUID(host, uuid, destination, timeunit, beginYear, endYear, dataLimit)
 		wg.Done()
 	}
-
 }
 
 func dlUUID(host, uuid, destination, timeunit string, beginYear, endYear, dataLimit int) {
