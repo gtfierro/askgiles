@@ -59,6 +59,10 @@ func dlUUID(host, uuid, destination, timeunit string, beginYear, endYear, dataLi
 		}
 	}
 	writer.Flush()
-	file.Sync()
-	file.Close()
+	if err := file.Sync(); err != nil {
+		panic(err)
+	}
+	if err := file.Close(); err != nil {
+		panic(err)
+	}
 }
