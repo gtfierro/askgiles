@@ -16,7 +16,7 @@ var (
 )
 
 func init() {
-	flag.StringVar(&host, "h", "http://localhost", "Host to direct queries to")
+	flag.StringVar(&host, "h", "http://0.0.0.0:8079/api/query", "Host to direct queries to")
 	flag.BoolVar(&formatTime, "t", true, "If true, formats time according to RFC3339. Can specify ANSIC, RFC822, RFC1123, RFC3339 using the -f flag. If false, displays the unix-style timestamp.")
 	flag.StringVar(&timeFormat, "f", "RFC3339", "Time format. Can specify ANSIC, RFC822, RFC1123, RFC3339.")
 }
