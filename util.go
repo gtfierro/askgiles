@@ -7,6 +7,7 @@ import (
 	giles "github.com/gtfierro/giles/archiver"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 func prettyPrintJSON(v interface{}) {
@@ -27,6 +28,22 @@ func doQuery(host, query string) []giles.SmapMessage {
 
 	// expecting json
 	var data []giles.SmapMessage
+	var decoder = json.NewDecoder(resp.Body)
+	decoder.Decode(&data)
+	resp.Body.Close()
+	return data
+}
+
+func doDistinctQuery(host, query string) []string {
+	var buf = bytes.NewBufferString(query)
+	resp, err := http.Post(host, MIME_TEXT, buf)
+	if err != nil {
+		fmt.Printf("Error running query %v: %v\n", query, err)
+		os.Exit(1)
+	}
+
+	// expecting json
+	var data []string
 	var decoder = json.NewDecoder(resp.Body)
 	decoder.Decode(&data)
 	resp.Body.Close()
@@ -57,4 +74,13 @@ func extractTime(msg giles.SmapMessage) []float64 {
 		times = append(times, float64(val))
 	}
 	return times
+}
+
+// encodes a list of floats as a list of strings
+func toString(data []float64) []string {
+	ret := make([]string, len(data))
+	for i, num := range data {
+		ret[i] = strconv.FormatFloat(num, 'f', -1, 64)
+	}
+	return ret
 }

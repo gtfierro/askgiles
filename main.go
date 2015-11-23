@@ -31,10 +31,20 @@ func handleVis(host, query, viztype string) {
 }
 
 func main() {
-	var host string
-	var formatTime bool
-	var timeFormat string
-	var query string
+	var (
+		query string
+
+		host       string
+		formatTime bool
+		timeFormat string
+
+		where       string
+		beginYear   int
+		endYear     int
+		dataLimit   int
+		destination string
+		timeunit    string
+	)
 
 	queryCommand := flag.NewFlagSet("query", flag.ExitOnError)
 	queryCommand.StringVar(&host, "h", "http://0.0.0.0:8079/api/query", "Host to direct queries to")
@@ -43,6 +53,14 @@ func main() {
 
 	vizCommand := flag.NewFlagSet("viz", flag.ExitOnError)
 	vizCommand.StringVar(&host, "h", "http://0.0.0.0:8079/api/query", "Host to direct queries to")
+
+	downloadCommand := flag.NewFlagSet("download", flag.ExitOnError)
+	downloadCommand.StringVar(&host, "h", "http://0.0.0.0:8079/api/query", "Host to direct queries to")
+	downloadCommand.IntVar(&beginYear, "b", 2000, "Start year for download (low)")
+	downloadCommand.IntVar(&endYear, "e", 2020, "End year for download (high)")
+	downloadCommand.IntVar(&dataLimit, "l", 10000000, "Maximum number of points to download per stream")
+	downloadCommand.StringVar(&destination, "d", "./data/", "Path to folder to save data")
+	downloadCommand.StringVar(&timeunit, "t", "ms", "Unit of time to download data as: s, ms, us, ns")
 
 	if len(os.Args) == 1 {
 		flag.Usage()
@@ -58,6 +76,10 @@ func main() {
 		query = os.Args[len(os.Args)-1]
 		vizCommand.Parse(os.Args[3:])
 		handleVis(host, query, os.Args[2])
+	case "dl", "download":
+		where = os.Args[len(os.Args)-1]
+		downloadCommand.Parse(os.Args[2:])
+		doDownload(host, where, destination, timeunit, beginYear, endYear, dataLimit)
 	}
 
 	if queryCommand.Parsed() {
