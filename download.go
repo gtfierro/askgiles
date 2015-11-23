@@ -47,7 +47,7 @@ func dlUUID(host, uuid, destination, timeunit string, beginYear, endYear, dataLi
 	}
 	writer := csv.NewWriter(file)
 
-	query := fmt.Sprintf("select data in ('1/1/%d', '1/1/%d') limit %d as %s where uuid = '%s';", endYear, beginYear, dataLimit, timeunit, uuid)
+	query := fmt.Sprintf("select data in ('1/1/%d', '1/1/%d') limit %d as %s where uuid = '%s';", beginYear, endYear, dataLimit, timeunit, uuid)
 	msgs := doQuery(host, query)
 
 	for _, msg := range msgs {
