@@ -44,6 +44,10 @@ func handleVis(args []string) {
 	switch visType {
 	case "spark":
 		visSpark(data)
+	case "plot":
+		visPlot(data)
+	case "plottime":
+		visPlotTime(data)
 	default:
 		visSpark(data)
 	}
