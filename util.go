@@ -17,7 +17,7 @@ func prettyPrintJSON(v interface{}) {
 	}
 }
 
-func doQuery(query string) []giles.SmapMessage {
+func doQuery(host, query string) []giles.SmapMessage {
 	var buf = bytes.NewBufferString(query)
 	resp, err := http.Post(host, MIME_TEXT, buf)
 	if err != nil {
